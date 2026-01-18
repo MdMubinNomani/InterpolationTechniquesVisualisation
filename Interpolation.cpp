@@ -66,7 +66,20 @@ double newtonForward(double xp) {
 
 // Graph Generation
 void generateGraphs() {
+    generateDataFiles();
 
+    ofstream actual("actual_data.txt");
+    for (int i = 0; i < n; i++)
+        actual << x[i] << " " << y[i] << "\n";
+    actual.close();
+
+    ofstream qx("query_x.txt");
+    qx << queryX;
+    qx.close();
+
+    createPythonScript();
+    system("python plot_interpolation.py");
+    cout << "\nGraphs generated successfully (PNG files).\n";
 }
 
 // Error Estimation
@@ -79,6 +92,53 @@ void errorEstimation() {
     }
 }
 
+/* ---------- PYTHON SCRIPT CREATION ---------- */
+void createPythonScript() {
+    ofstream py("plot_interpolation.py");
+
+    py <<
+"import matplotlib.pyplot as plt\n"
+"\n"
+"QUERY_X = float(open('query_x.txt').read())\n"
+"\n"
+"def read_data(file):\n"
+"    x, y = [], []\n"
+"    for line in open(file):\n"
+"        a, b = map(float, line.split())\n"
+"        x.append(a)\n"
+"        y.append(b)\n"
+"    return x, y\n"
+"\n"
+"actual_x, actual_y = read_data('actual_data.txt')\n"
+"\n"
+"def plot(interp_file, title, out):\n"
+"    xi, yi = read_data(interp_file)\n"
+"\n"
+"    # Find interpolated value at QUERY_X\n"
+"    y_query = None\n"
+"    for i in range(len(xi) - 1):\n"
+"        if xi[i] <= QUERY_X <= xi[i + 1]:\n"
+"            y_query = yi[i]\n"
+"            break\n"
+"\n"
+"    plt.plot(actual_x, actual_y, 'bo', label='Actual Data')\n"
+"    plt.plot(xi, yi, 'k-', label='Interpolated Curve')\n"
+"    plt.plot(QUERY_X, y_query, 'rx', markersize=10, label='Interpolated Value')\n"
+"\n"
+"    plt.xlabel('x')\n"
+"    plt.ylabel('y')\n"
+"    plt.title(title)\n"
+"    plt.legend()\n"
+"    plt.grid(True)\n"
+"    plt.savefig(out)\n"
+"    plt.clf()\n"
+"\n"
+"plot('lagrange_data.txt', 'Lagrange Interpolation', 'lagrange.png')\n"
+"plot('newton_dd_data.txt', 'Newton Divided Difference', 'newton_dd.png')\n"
+"plot('newton_forward_data.txt', 'Newton Forward Interpolation', 'newton_forward.png')\n";
+
+    py.close();
+}
 
 // Menu
 void menu() {
