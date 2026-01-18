@@ -22,7 +22,18 @@ void errorEstimation();
 
 // Interpolation Methods
 double lagrange(double xp) {
-    return 0.0;
+    double yp = 0;
+    for (int i = 0; i <= DEGREE; i++)
+    {
+        double term = y[i];
+        for (int j = 0; j <= DEGREE; j++)
+        {
+            if (j != i)
+                term *= (xp - x[j]) / (x[i] - x[j]);
+        }
+        yp += term;
+    }
+    return yp;
 }
 
 double newtonDD(double xp) {
@@ -60,7 +71,12 @@ void generateGraphs() {
 
 // Error Estimation
 void errorEstimation() {
-
+    cout << "\nError Estimation (Lagrange):\n";
+    for (int i = 0; i < n; i++)
+    {
+        double err = fabs(lagrange(x[i]) - y[i]);
+        cout << "x = " << x[i] << " | Error = " << err << "\n";
+    }
 }
 
 
