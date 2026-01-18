@@ -8,6 +8,8 @@
 using namespace std;
 
 // Globals
+int n;
+vector<double> x, y;
 double queryX;
 
 // Declaration
@@ -54,6 +56,13 @@ void menu() {
 }
 
 int main() {
+    ifstream fin("input.txt");
+    fin >> n;
+
+    x.resize(n); y.resize(n);
+    for (int i = 0; i < n; i++) fin >> x[i] >> y[i];
+    fin >> queryX;
+    fin.close();
 
     int ch;
     do {
