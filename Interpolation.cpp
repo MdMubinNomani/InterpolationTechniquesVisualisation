@@ -30,7 +30,27 @@ double newtonDD(double xp) {
 }
 
 double newtonForward(double xp) {
-    return 0.0;
+    int m = DEGREE + 1;
+    vector<vector<double>> d(m, vector<double>(m));
+
+    for (int i = 0; i < m; i++)
+        d[i][0] = y[i];
+
+    for (int j = 1; j < m; j++)
+        for (int i = 0; i < m - j; i++)
+            d[i][j] = d[i + 1][j - 1] - d[i][j - 1];
+
+    double h = x[1] - x[0];
+    double u = (xp - x[0]) / h;
+
+    double res = y[0];
+    double term = 1;
+
+    for (int i = 1; i < m; i++) {
+        term *= (u - (i - 1)) / i;
+        res += term * d[0][i];
+    }
+    return res;
 }
 
 // Graph Generation
