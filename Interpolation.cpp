@@ -11,6 +11,7 @@ using namespace std;
 int n;
 vector<double> x, y;
 double queryX;
+int DEGREE;
 
 // Declaration
 double lagrange(double xp);
@@ -42,6 +43,7 @@ void errorEstimation() {
 
 }
 
+
 // Menu
 void menu() {
     cout << "\n----- MENU -----\n";
@@ -58,6 +60,7 @@ void menu() {
 int main() {
     ifstream fin("input.txt");
     fin >> n;
+    DEGREE = min(n-1, 6);
 
     x.resize(n); y.resize(n);
     for (int i = 0; i < n; i++) fin >> x[i] >> y[i];
